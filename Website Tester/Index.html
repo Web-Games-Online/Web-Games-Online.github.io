@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Code Editor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 80px);
+        }
+        .file-explorer {
+            width: 250px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .file-explorer-header {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .file-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-item:hover {
+            background: #f8f9fa;
+        }
+        .file-item.active {
+            background: #e9ecef;
+        }
+        .file-actions {
+            display: none;
+        }
+        .file-item:hover .file-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .file-action-btn {
+            padding: 2px 5px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .file-action-btn:hover {
+            background: #5a6268;
+        }
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .preview {
+            flex: 1;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .editor {
+            flex: 1;
+            border-top: 1px solid #dee2e6;
+        }
+        textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: none;
+        }
+        #preview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        .header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+        }
+        .modal input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .current-file {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-family: monospace;
+        }
+        h2 {
+            margin: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Web Code Editor</h2>
+        <button onclick="runCode()">Run Code (Ctrl + Enter)</button>
+    </div>
+    <div class="container">
+        <div class="file-explorer">
+            <div class="file-explorer-header">
+                <strong>Files</strong>
+                <button onclick="showNewFileModal()" class="btn-secondary">New File</button>
+            </div>
+            <div class="file-list" id="fileList"></div>
+        </div>
+        <div class="editor-container">
+            <div class="current-file" id="currentFile">No file selected</div>
+            <div class="editor">
+                <textarea id="editor" placeholder="Select or create a file to start editing..."></textarea>
+            </div>
+        </div>
+        <div class="preview">
+            <iframe id="preview"></iframe>
+        </div>
+    </div>
+
+    <!-- New File Modal -->
+    <div class="modal" id="newFileModal">
+        <div class="modal-content">
+            <h3>New File</h3>
+            <input type="text" id="newFileName" placeholder="Enter file name (e.g., index.html)">
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="hideNewFileModal()">Cancel</button>
+                <button onclick="createNewFile()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename File Modal -->
+    <div class="modal" id="renameFileModal">
+        <div class="modal-content">
+            <h3>Rename File</h3>
+            <input type="text" id="renameFileName" placeholder="Enter new file name">
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="hideRenameFileModal()">Cancel</button>
+                <button onclick="renameFile()">Rename</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let files = {
+            'index.html': `<!DOCTYPE html>
+<html>
+<head>
+    <title>My Test Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Hello World!</h1>
+    <p>Start editing to test your code.</p>
+    <button id="testBtn">Click me!</button>
+    <script src="script.js"><\/script>
+</body>
+</html>`,
+            'styles.css': `body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2980b9;
+}`,
+            'script.js': `document.getElementById('testBtn').addEventListener('click', function() {
+    alert('Button clicked!');
+});`
+        };
+
+        let currentFile = null;
+        let fileToRename = null;
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            Object.keys(files).forEach(filename => {
+                const fileItem = document.createElement('div');
+                fileItem.className = `file-item${currentFile === filename ? ' active' : ''}`;
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = filename;
+                fileItem.appendChild(nameSpan);
+
+                const actions = document.createElement('div');
+                actions.className = 'file-actions';
+                
+                const renameBtn = document.createElement('button');
+                renameBtn.className = 'file-action-btn';
+                renameBtn.textContent = 'Rename';
+                renameBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    showRenameFileModal(filename);
+                };
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'file-action-btn';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteFile(filename);
+                };
+
+                actions.appendChild(renameBtn);
+                actions.appendChild(deleteBtn);
+                fileItem.appendChild(actions);
+
+                fileItem.onclick = () => openFile(filename);
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function openFile(filename) {
+            currentFile = filename;
+            document.getElementById('editor').value = files[filename];
+            document.getElementById('currentFile').textContent = filename;
+            updateFileList();
+        }
+
+        function showNewFileModal() {
+            document.getElementById('newFileModal').classList.add('active');
+            document.getElementById('newFileName').value = '';
+            document.getElementById('newFileName').focus();
+        }
+
+        function hideNewFileModal() {
+            document.getElementById('newFileModal').classList.remove('active');
+        }
+
+        function showRenameFileModal(filename) {
+            fileToRename = filename;
+            document.getElementById('renameFileModal').classList.add('active');
+            document.getElementById('renameFileName').value = filename;
+            document.getElementById('renameFileName').focus();
+        }
+
+        function hideRenameFileModal() {
+            document.getElementById('renameFileModal').classList.remove('active');
+            fileToRename = null;
+        }
+
+        function createNewFile() {
+            const filename = document.getElementById('newFileName').value.trim();
+            if (filename) {
+                if (files[filename]) {
+                    alert('A file with this name already exists!');
+                    return;
+                }
+                files[filename] = '';
+                hideNewFileModal();
+                updateFileList();
+                openFile(filename);
+            }
+        }
+
+        function renameFile() {
+            const newFilename = document.getElementById('renameFileName').value.trim();
+            if (newFilename && fileToRename) {
+                if (files[newFilename]) {
+                    alert('A file with this name already exists!');
+                    return;
+                }
+                files[newFilename] = files[fileToRename];
+                delete files[fileToRename];
+                hideRenameFileModal();
+                currentFile = newFilename;
+                updateFileList();
+                openFile(newFilename);
+            }
+        }
+
+        function deleteFile(filename) {
+            if (confirm(`Are you sure you want to delete ${filename}?`)) {
+                delete files[filename];
+                if (currentFile === filename) {
+                    currentFile = null;
+                    document.getElementById('editor').value = '';
+                    document.getElementById('currentFile').textContent = 'No file selected';
+                }
+                updateFileList();
+            }
+        }
+
+        function runCode() {
+            // Find HTML file
+            let htmlFile = Object.keys(files).find(f => f.endsWith('.html'));
+            if (!htmlFile) {
+                alert('No HTML file found to run!');
+                return;
+            }
+
+            let htmlContent = files[htmlFile];
+            
+            // Replace external CSS links with actual CSS content
+            htmlContent = htmlContent.replace(
+                /<link[^>]*href="([^"]*)"[^>]*>/g,
+                (match, href) => {
+                    if (files[href]) {
+                        return `<style>${files[href]}</style>`;
+                    }
+                    return match;
+                }
+            );
+
+            // Replace external JS scripts with actual JS content
+            htmlContent = htmlContent.replace(
+                /<script[^>]*src="([^"]*)"[^>]*><\/script>/g,
+                (match, src) => {
+                    if (files[src]) {
+                        return `<script>${files[src]}<\/script>`;
+                    }
+                    return match;
+                }
+            );
+
+            // Update the preview
+            const preview = document.getElementById('preview');
+            preview.srcdoc = htmlContent;
+        }
+
+        // Save file content when editing
+        document.getElementById('editor').addEventListener('input', function() {
+            if (currentFile) {
+                files[currentFile] = this.value;
+            }
+        });
+
+        // Add keyboard shortcut (Ctrl + Enter)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                runCode();
+            }
+        });
+
+        // Initialize
+        updateFileList();
+        if (Object.keys(files).length > 0) {
+            openFile(Object.keys(files)[0]);
+        }
+    </script>
+</body>
+</html>
