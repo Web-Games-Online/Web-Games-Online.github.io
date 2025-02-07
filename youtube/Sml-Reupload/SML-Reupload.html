@@ -53,6 +53,22 @@
             letter-spacing: 1px;
         }
 
+        .header .home-btn {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .header .home-btn:hover {
+            background: #7320a2; /* Darker purple */
+            transform: scale(1.05);
+        }
+
         .search-container {
             position: relative;
             width: 40%;
@@ -203,6 +219,9 @@
 
     <nav class="header">
         <div class="logo">SML Reupload Hub</div>
+        <div class="home-btn">
+            <a href="https://web-games-online.github.io/youtube/Index.html" style="color: white; text-decoration: none;">Home</a>
+        </div>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search videos...">
             <button onclick="searchVideos()">Search</button>
