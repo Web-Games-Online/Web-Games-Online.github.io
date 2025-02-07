@@ -15,16 +15,18 @@
             overflow: hidden;
         }
 
-        .header {
-            background-color: rgba(31, 31, 31, 0.9);
-            padding: 20px;
-            text-align: center;
-            font-size: 2.5rem;
-            color: #9b59b6;
-            font-weight: bold;
-            text-shadow: 0 0 15px rgba(155, 89, 182, 0.7);
-            position: relative;
-        }
+.header {
+    background-color: rgba(31, 31, 31, 0.7); /* Adjust transparency */
+    padding: 20px;
+    text-align: center;
+    font-size: 2.5rem;
+    color: #9b59b6;
+    font-weight: bold;
+    text-shadow: 0 0 15px rgba(155, 89, 182, 0.7);
+    position: relative;
+    backdrop-filter: blur(10px); /* Apply blur effect */
+}
+
 
         .header .btn {
             position: absolute;
@@ -53,6 +55,28 @@
             justify-items: center;
             position: relative;
             z-index: 1;
+            max-height: 80vh; /* Limit the height to make it scrollable */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        /* Custom Scrollbar */
+        .hub-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .hub-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .hub-container::-webkit-scrollbar-thumb {
+            background: #9b59b6;
+            border-radius: 10px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .hub-container::-webkit-scrollbar-thumb:hover {
+            background: #8e44ad;
         }
 
         .channel-card {
@@ -122,7 +146,6 @@
     </div>
 
     <div class="hub-container">
-        <!-- Channel 1 -->
         <a href="leroy.productions/leroy.productions.html" class="channel-card">
             <img class="channel-image" src="https://github.com/Web-Games-Online/Web-Games-Online.github.io/blob/main/youtube/Pfp's/leroy.productions.jpg?raw=true" alt="leroy.productions">
             <div class="channel-name">leroy.productions</div>
