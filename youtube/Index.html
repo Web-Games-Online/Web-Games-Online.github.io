@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,14 +18,20 @@
         }
 
         .header {
-            background-color: rgba(31, 31, 31, 0.9);
+            background-color: rgba(31, 31, 31, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 20px;
             text-align: center;
             font-size: 2.5rem;
             color: #9b59b6;
             font-weight: bold;
             text-shadow: 0 0 15px rgba(155, 89, 182, 0.7);
-            position: relative;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
         }
 
         .header .btn {
@@ -50,12 +57,12 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 70px;
-            padding: 50px;
+            padding: 100px 50px 50px 50px;
             justify-items: center;
             position: relative;
             z-index: 1;
-            max-height: 80vh; /* Limit the height to make it scrollable */
-            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         /* Custom Scrollbar */
@@ -136,14 +143,11 @@
     </style>
 </head>
 <body>
-
     <div id="particles-js"></div>
-
-    <div class="header">
+    <div class="header" id="header">
         Channel Hub
         <a href="peoples-channels.html" class="btn">Peoples Channels</a>
     </div>
-
     <div class="hub-container">
         <a href="Sml/Sml.html" class="channel-card">
             <img class="channel-image" src="https://github.com/Web-Games-Online/Web-Games-Online.github.io/blob/main/youtube/Pfp's/Sml.jpg?raw=true" alt="Sml">
@@ -355,7 +359,16 @@
             },
             "retina_detect": true
         });
-    </script>
 
+        window.onscroll = function() {
+            var header = document.getElementById('header');
+            var scrollPosition = window.pageYOffset;
+            if (scrollPosition > 0) {
+                header.style.backgroundColor = 'rgba(31, 31, 31, 0.4)';
+            } else {
+                header.style.backgroundColor = 'rgba(31, 31, 31, 0.6)';
+            }
+        };
+    </script>
 </body>
 </html>
