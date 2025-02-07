@@ -1,0 +1,438 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leroydavis01 Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <style>
+        :root {
+            --primary-color: #9b4de0;
+            --bg-dark: #0a0a0a;
+            --bg-lighter: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-description: #9b4de0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            position: relative;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+        }
+
+        .header {
+            background: rgba(26, 26, 26, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-shadow: 0 0 20px rgba(155, 77, 224, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .header .home-btn {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .header .home-btn:hover {
+            background: #7320a2;
+            transform: scale(1.05);
+        }
+
+        .search-container {
+            position: relative;
+            width: 40%;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid transparent;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 25px;
+            border: none;
+            border-radius: 25px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background: #7320a2;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            padding: 90px 30px 30px;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        .video-player {
+            background: var(--bg-lighter);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-title {
+            margin: 20px 0;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar {
+            background: var(--bg-lighter);
+            border-radius: 20px;
+            padding: 20px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--bg-lighter);
+        }
+
+        .video-item {
+            display: grid;
+            grid-template-columns: 168px 1fr;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .video-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .video-info h3 {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .video-info p {
+            font-size: 0.8rem;
+            color: var(--text-description);
+        }
+
+        #loadMore {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #loadMore:hover {
+            background: #7320a2;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                height: auto;
+                max-height: 500px;
+            }
+        }
+
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div> <!-- Particle Background -->
+
+    <nav class="header">
+        <div class="logo">Leroydavis01 Hub</div>
+        <div class="home-btn">
+            <a href="https://web-games-online.github.io/youtube/Index.html" style="color: white; text-decoration: none;">Home</a>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search videos...">
+            <button onclick="searchVideos()">Search</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="video-player">
+                <iframe id="current-video" width="100%" height="600" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <h1 id="video-title">Select a video to watch</h1>
+        </div>
+
+        <div class="sidebar">
+            <div class="playlist" id="videoList">
+                <!-- Videos will be loaded here -->
+            </div>
+            <button id="loadMore" onclick="loadMoreVideos()">Load More Videos</button>
+        </div>
+    </div>
+
+    <script>
+              particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#9b4de0" // Purple particles
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#9b4de0"
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 0.2,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 4,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#9b4de0", // Purple lines
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    }
+                }
+            },
+            retina_detect: true
+        });
+        
+        // API Configuration
+        const API_KEY = 'AIzaSyBETtC0-4vMk3zJuKJduZBViT5K5CX3Xjc'; // Replace with your API key
+        const CHANNEL_ID = 'UC9Tqu3foDQrzmF4NjP8-J3A';
+        let nextPageToken = '';
+        let currentSearch = 'all';
+
+        // Function to play selected video
+        function playVideo(videoId, title) {
+            const player = document.getElementById('current-video');
+            player.src = `https://www.youtube.com/embed/${videoId}`;
+            document.getElementById('video-title').textContent = title;
+        }
+
+        // Fetch videos from YouTube API
+        async function fetchVideos(pageToken = '', searchQuery = '') {
+            let url = `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=15`;
+            
+            if (pageToken) {
+                url += `&pageToken=${pageToken}`;
+            }
+            
+            if (searchQuery) {
+                url += `&q=${searchQuery}`;
+            }
+
+            console.log("Fetching URL:", url); // Debugging log
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error("Error fetching data:", data.error.message);
+                return null;
+            }
+
+            return data;
+        }
+
+        // Load videos and display them
+        async function loadVideos(clearList = true) {
+            const data = await fetchVideos('', currentSearch);
+            if (!data) {
+                return;
+            }
+
+            nextPageToken = data.nextPageToken;
+            const videoList = document.getElementById('videoList');
+            if (clearList) {
+                videoList.innerHTML = '';
+            }
+
+            console.log("Video Data:", data); // Debugging log
+
+            data.items.forEach(item => {
+                if (item.id.videoId) {
+                    const videoElement = document.createElement('div');
+                    videoElement.className = 'video-item';
+                    videoElement.onclick = () => playVideo(item.id.videoId, item.snippet.title);
+                    videoElement.innerHTML = `
+                        <img class="video-thumbnail" src="${item.snippet.thumbnails.high.url}" alt="${item.snippet.title}">
+                        <div class="video-info">
+                            <h3>${item.snippet.title}</h3>
+                            <p>Leroydavis01</p>
+                        </div>
+                    `;
+                    videoList.appendChild(videoElement);
+                }
+            });
+        }
+
+        // Load more videos when the button is clicked
+        async function loadMoreVideos() {
+            const data = await fetchVideos(nextPageToken, currentSearch);
+            if (!data) {
+                return;
+            }
+
+            nextPageToken = data.nextPageToken;
+            const videoList = document.getElementById('videoList');
+            
+            data.items.forEach(item => {
+                if (item.id.videoId) {
+                    const videoElement = document.createElement('div');
+                    videoElement.className = 'video-item';
+                    videoElement.onclick = () => playVideo(item.id.videoId, item.snippet.title);
+                    videoElement.innerHTML = `
+                        <img class="video-thumbnail" src="${item.snippet.thumbnails.high.url}" alt="${item.snippet.title}">
+                        <div class="video-info">
+                            <h3>${item.snippet.title}</h3>
+                            <p>Leroydavis01</p>
+                        </div>
+                    `;
+                    videoList.appendChild(videoElement);
+                }
+            });
+        }
+
+        // Search function
+        function searchVideos() {
+            const searchInput = document.getElementById('searchInput');
+            currentSearch = searchInput.value.trim();
+
+            if (!currentSearch) {
+                currentSearch = 'Leroydavis01';
+            }
+
+            loadVideos();
+        }
+
+        // Load videos on page load
+        window.onload = () => {
+            loadVideos(); // Load videos with default search term
+        };
+    </script>
+</body>
+</html>
