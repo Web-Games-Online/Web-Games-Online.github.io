@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -51,6 +50,22 @@
             color: var(--primary-color);
             text-shadow: 0 0 20px rgba(155, 77, 224, 0.3);
             letter-spacing: 1px;
+        }
+
+        .header .home-btn {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .header .home-btn:hover {
+            background: #7320a2; /* Darker purple */
+            transform: scale(1.05);
         }
 
         .search-container {
@@ -203,6 +218,9 @@
 
     <nav class="header">
         <div class="logo">SuperMarioLogan Hub</div>
+        <div class="home-btn">
+            <a href="https://web-games-online.github.io/youtube/Index.html" style="color: white; text-decoration: none;">Home</a>
+        </div>
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search videos...">
             <button onclick="searchVideos()">Search</button>
@@ -349,7 +367,7 @@
                         <img class="video-thumbnail" src="${item.snippet.thumbnails.high.url}" alt="${item.snippet.title}">
                         <div class="video-info">
                             <h3>${item.snippet.title}</h3>
-                            <p>SuperMarioLogan</p>
+                            <p>SML Reupload</p>
                         </div>
                     `;
                     videoList.appendChild(videoElement);
@@ -384,14 +402,14 @@
             currentSearch = searchInput.value.trim();
 
             if (!currentSearch) {
-                currentSearch = 'Sml'; // Default to SML if search is empty
+                currentSearch = 'SuperMarioLogan'; // Default to SML if search is empty
             }
 
             loadVideos();
         }
 
         window.onload = () => {
-            currentSearch = 'Sml'; // Default search term
+            currentSearch = 'SuperMarioLogan'; // Default search term
             loadVideos(); // Load videos based on the default search term
         };
     </script>
