@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SML Ultimate Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
     <style>
         :root {
-            --primary-color: #ff0052;
+            --primary-color: #9b4de0; /* Purple */
             --bg-dark: #0a0a0a;
             --bg-lighter: #1a1a1a;
             --text-primary: #ffffff;
             --text-secondary: #b0b0b0;
+            --text-description: #9b4de0; /* Purple text for video description */
         }
 
         * {
@@ -22,8 +24,11 @@
         }
 
         body {
-            background-color: var(--bg-dark);
+            position: relative;
             color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-dark); /* Black background */
         }
 
         .header {
@@ -44,7 +49,7 @@
             font-size: 2rem;
             font-weight: 600;
             color: var(--primary-color);
-            text-shadow: 0 0 20px rgba(255, 0, 82, 0.3);
+            text-shadow: 0 0 20px rgba(155, 77, 224, 0.3);
             letter-spacing: 1px;
         }
 
@@ -85,7 +90,7 @@
         }
 
         .search-bar button:hover {
-            background: #ff1a6c;
+            background: #7320a2; /* Darker purple */
             transform: translateY(-50%) scale(1.05);
         }
 
@@ -152,7 +157,7 @@
 
         .video-info p {
             font-size: 0.8rem;
-            color: var(--primary-color);
+            color: var(--text-description); /* Purple for video description */
         }
 
         #loadMore {
@@ -169,7 +174,7 @@
         }
 
         #loadMore:hover {
-            background: #ff1a6c;
+            background: #7320a2;
             transform: translateY(-2px);
         }
 
@@ -182,9 +187,20 @@
                 max-height: 500px;
             }
         }
+
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
+    <div id="particles-js"></div> <!-- Particle Background -->
+
     <nav class="header">
         <div class="logo">SML Reupload Hub</div>
         <div class="search-bar">
@@ -210,6 +226,85 @@
     </div>
 
     <script>
+        // Initialize Particles.js for particle background
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#9b4de0" // Purple particles
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#9b4de0"
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 0.2,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 4,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#9b4de0", // Purple lines
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        // Existing JavaScript code
         const API_KEY = 'AIzaSyBETtC0-4vMk3zJuKJduZBViT5K5CX3Xjc'; // Replace with your API key
         const CHANNEL_ID = 'UCohcQ4xEr7tTLe5wyhX_pew'; // SuperMarioLogan's channel ID
         let nextPageToken = '';
@@ -228,7 +323,6 @@
                 url += `&pageToken=${pageToken}`;
             }
             
-            // If search query exists, add it to the URL
             if (searchQuery) {
                 url += `&q=${searchQuery}`;
             }
@@ -289,7 +383,6 @@
             const searchInput = document.getElementById('searchInput');
             currentSearch = searchInput.value.trim();
 
-            // Adjust search to include SML and re-upload content
             if (!currentSearch) {
                 currentSearch = 'SuperMarioLogan'; // Default to SML if search is empty
             }
@@ -297,7 +390,6 @@
             loadVideos();
         }
 
-        // Load initial videos when page loads
         window.onload = () => {
             currentSearch = 'SuperMarioLogan'; // Default search term
             loadVideos(); // Load videos based on the default search term
