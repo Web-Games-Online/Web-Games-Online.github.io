@@ -53,6 +53,28 @@
             justify-items: center;
             position: relative;
             z-index: 1;
+            max-height: 80vh; /* Limit the height to make it scrollable */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+
+        /* Custom Scrollbar */
+        .hub-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .hub-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .hub-container::-webkit-scrollbar-thumb {
+            background: #9b59b6;
+            border-radius: 10px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .hub-container::-webkit-scrollbar-thumb:hover {
+            background: #8e44ad;
         }
 
         .channel-card {
