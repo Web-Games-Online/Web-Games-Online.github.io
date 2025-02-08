@@ -1,0 +1,178 @@
+(function(opts_){
+  'use strict';
+  var f=this||self;
+
+  // Custom CSS to match the design
+  var customCss = `
+    .gsc-control-cse {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5; /* Light background */
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .gsc-control-cse .gsc-table-result {
+      font-family: 'Arial', sans-serif;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .gsc-control-cse .gsc-webResult {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      transition: background-color 0.3s ease;
+    }
+
+    .gsc-control-cse .gsc-webResult:hover {
+      background-color: #f9f9f9; /* Light hover effect */
+    }
+
+    .gsc-control-cse .gsc-webResult a {
+      color: #007bff; /* Link color */
+      text-decoration: none;
+    }
+
+    .gsc-control-cse .gsc-webResult a:hover {
+      text-decoration: underline;
+    }
+
+    .gsc-refinementsGradient {
+      background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    }
+
+    .gsc-search-box input {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      transition: border 0.3s ease;
+    }
+
+    .gsc-search-box input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .gsc-search-box button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .gsc-search-box button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Adjusting result set size and styling */
+    .gsc-results .gsc-webResult {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    .gsc-webResult.gsc-cursor-page {
+      border-bottom: none;
+    }
+
+    /* Results container customization */
+    .gsc-results .gsc-webResult .gsc-thumbnail-wrapper {
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .gsc-results .gsc-webResult .gsc-thumbnail-wrapper img {
+      border-radius: 5px;
+      width: 60px;
+      height: 60px;
+    }
+
+    .gsc-results .gsc-webResult .gsc-url-top {
+      font-size: 14px;
+      color: #777;
+    }
+  `;
+
+  // Full configuration for Google Custom Search
+  opts_.rawCss = customCss; // Apply custom CSS styles
+  opts_.theme = "V2_DEFAULT"; // Choose the default theme
+  opts_.language = "en"; // Set the language for the search
+  opts_.cx = "e191c4bbd82754b39"; // Your Custom Search Engine ID (CX)
+  
+  opts_.uiOptions = {
+    resultsUrl: "",
+    enableAutoComplete: true,
+    enableImageSearch: false,
+    imageSearchLayout: "popup",
+    resultSetSize: "filtered_cse", // Results layout option
+    enableOrderBy: true,
+    orderByOptions: [{
+      label: "Relevance",
+      key: ""
+    }, {
+      label: "Date",
+      key: "date"
+    }],
+    overlayResults: true, // Display results overlay
+    queryParameterName: "q", // Search query parameter
+    numTopRefinements: -1, // Limit number of refinements
+    hideElementBranding: false, // Keep branding visible
+    cssThemeVersion: 4, // Use CSS theme version 4
+    isSafeSearchActive: false, // SafeSearch option
+    numTopAds: 3 // Number of ads at the top of results
+  };
+
+  // URL setup for CSE library
+  var P, A=opts_.usqp?{usqp:opts_.usqp}:{}, Q=opts_.language.toLowerCase();
+  P=opts_.cselibVersion?z({versionDir:opts_.cselibVersion,versionSlash:L,lang:Q}):z({versionDir:"",versionSlash:"",lang:Q});
+
+  // Function to inject CSE library script
+  var R = window.__gcse.scb;
+  var S = document.createElement("script");
+  S.src = r(P);
+  S.type = "text/javascript";
+  document.getElementsByTagName("head")[0].appendChild(S);
+
+  // Loading the CSE with custom configurations
+  R && (S.onload = R);
+})( {
+  "cx": "e191c4bbd82754b39", // Your CSE ID
+  "language": "en", // Language set to English
+  "theme": "V2_DEFAULT", // Default theme for CSE
+  "uiOptions": {
+    "resultsUrl": "",
+    "enableAutoComplete": true,
+    "enableImageSearch": false,
+    "imageSearchLayout": "popup",
+    "resultSetSize": "filtered_cse",
+    "enableOrderBy": true,
+    "orderByOptions": [{
+      "label": "Relevance",
+      "key": ""
+    }, {
+      "label": "Date",
+      "key": "date"
+    }],
+    "overlayResults": true,
+    "queryParameterName": "q",
+    "numTopRefinements": -1,
+    "hideElementBranding": false,
+    "cssThemeVersion": 4,
+    "isSafeSearchActive": false,
+    "numTopAds": 3
+  },
+  "protocol": "https",
+  "rawCss": customCss, // Custom styles
+  "cse_token": "AB-tC_55iWlwnA--SHmjLTdUudaD:1738993770672", // Your CSE token
+  "isHostedPage": false,
+  "exp": ["cc", "apo"],
+  "cselibVersion": "5c8d58cbdc1332a7",
+  "usqp": "CAI\u003d"
+});
