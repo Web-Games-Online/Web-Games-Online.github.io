@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Google Search</title>
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- Google Custom Search -->
+    <script async src="https://cse.google.com/cse.js?cx=e191c4bbd82754b39"></script>
+    <style>
+        /* General Body Styling */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: #000; /* Black background */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header Styling */
+        header {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7); /* 70% transparent black */
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            backdrop-filter: blur(8px); /* Blurry background */
+        }
+
+        header h2 {
+            font-size: 2rem;
+            margin: 0;
+            text-align: center;
+            font-weight: bold;
+            background: linear-gradient(to right, #800080, #ff00ff); /* Purple gradient */
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        header p {
+            font-size: 0.9rem;
+            color: #ddd;
+            margin: 5px 0;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Main Content */
+        h1 {
+            margin-top: 80px; /* To avoid overlap with the fixed header */
+            font-size: 3rem;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+            font-weight: bold;
+            background: linear-gradient(to right, #800080, #ff00ff); /* Purple gradient */
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Google Search Box Styling */
+        .gcse-search {
+            width: 90%; /* Make the search box wider (previously 80%) */
+            max-width: 800px; /* Increase max-width for larger screens */
+            background: linear-gradient(145deg, #800080, #ff00ff); /* Purple gradient background */
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .gcse-search:hover {
+            transform: scale(1.05);
+        }
+
+        /* Styling the Search Input Box */
+        .gsc-input-box {
+            width: 100%; /* Ensure the input takes up the full width */
+            padding: 12px;
+            font-size: 1.2rem;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            outline: none;
+            color: #fff;
+            background-color: transparent;
+            transition: border 0.3s ease, background-color 0.3s ease;
+        }
+
+        .gsc-input-box:focus {
+            border-color: #ff00ff;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Search Results Styling */
+        .gsc-webResult {
+            background: linear-gradient(145deg, #800080, #ff00ff); /* Gradient for results */
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .gsc-webResult:hover {
+            transform: scale(1.02);
+        }
+
+        .gsc-title {
+            font-size: 1.5rem;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .gsc-title:hover {
+            color: #ff00ff;
+        }
+
+        .gsc-snippet {
+            color: #ddd;
+            font-size: 1rem;
+        }
+
+        .gsc-url {
+            color: #ff00ff;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .gsc-url:hover {
+            text-decoration: underline;
+        }
+
+        /* Particles.js Background */
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <h2>Syfer-eng Custom Search</h2>
+        <p>Version 1.0 - Made by Syfer-eng</p>
+    </header>
+
+    <!-- Google Custom Search -->
+    <div class="gcse-search"></div>
+
+    <!-- Particles.js Background -->
+    <div id="particles-js"></div>
+
+    <script>
+        // Particles.js Configuration
+        particlesJS("particles-js", {
+            particles: {
+                number: {
+                    value: 100,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#800080" // Purple color for particles
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 4,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#800080",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "grab"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    }
+                },
+                modes: {
+                    grab: {
+                        distance: 200,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+</body>
+
+</html>
