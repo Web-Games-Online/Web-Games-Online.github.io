@@ -4,7 +4,7 @@ class DiscordProxy {
         this.currentIndex = -1;
         this.frame = null;
         this.proxyBase = 'https://cors-anywhere.herokuapp.com/';
-        this.discordUrl = 'https://discord.com';
+        this.discordUrl = 'https://discord.com/app';
     }
 
     initialize() {
