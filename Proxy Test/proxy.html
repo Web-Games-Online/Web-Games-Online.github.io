@@ -199,14 +199,18 @@
             "retina_detect": true
         });
 
-        class ProxyService {
-            constructor() {
-                this.proxyUrls = [
-                    'https://cors-anywhere.herokuapp.com/',
-                    'https://api.codetabs.com/v1/proxy?quest='
-                ];
-                this.resultDiv = document.getElementById('result');
-            }
+// Update the ProxyService class with these working proxy URLs
+class ProxyService {
+    constructor() {
+        this.proxyUrls = [
+            'https://api.allorigins.win/raw?url=',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://proxy.cors.sh/',
+            'https://corsproxy.io/?'
+        ];
+        this.resultDiv = document.getElementById('result');
+    }
+}
 
             async fetchUrl(url) {
                 for (let proxyUrl of this.proxyUrls) {
