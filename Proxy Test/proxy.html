@@ -1,9 +1,10 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Web Proxy</title>
-    <link rel="stylesheet" href="https://raw.githubusercontent.com/Web-Games-Online/Web-Games-Online.github.io/refs/heads/main/Proxy%20Test/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #9b59b6;
@@ -245,8 +246,8 @@
             </div>
 
             <div class="input-group">
-                <input type="url" class="url-input" id="urlInput"
-                       placeholder="Enter URL (e.g., https://example.com)"
+                <input type="url" class="url-input" id="urlInput" 
+                       placeholder="Enter URL (e.g., https://example.com)" 
                        autocomplete="off">
                 <i class="fas fa-link input-icon"></i>
             </div>
@@ -373,7 +374,7 @@
                 try {
                     const response = await fetch(this.proxyUrl + encodeURIComponent(url));
                     if (!response.ok) throw new Error('Failed to fetch content');
-
+                    
                     const content = await response.text();
                     this.displayContent(content);
                     this.showStatus('Site loaded successfully!', 'success');
