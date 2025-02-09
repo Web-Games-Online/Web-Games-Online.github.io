@@ -1,0 +1,162 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Proxy</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+            --background-color: #ecf0f1;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--background-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: var(--primary-color);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .status {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .error {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .proxy-frame {
+            width: 100%;
+            height: 500px;
+            border: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Web Proxy</h1>
+        <div class="input-group">
+            <input type="url" id="urlInput" placeholder="Enter URL to proxy (e.g., https://example.com)">
+        </div>
+        <button onclick="proxyUrl()">Load Site</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        class ProxyService {
+            constructor() {
+                this.corsProxy = 'https://api.allorigins.win/get?url=';
+                this.resultDiv = document.getElementById('result');
+            }
+
+            async fetchUrl(url) {
+                try {
+                    const encodedUrl = encodeURIComponent(url);
+                    const response = await fetch(`${this.corsProxy}${encodedUrl}`);
+                    const data = await response.json();
+                    
+                    if (data.contents) {
+                        this.displayContent(data.contents);
+                        this.showStatus('Site loaded successfully!', 'success');
+                    } else {
+                        throw new Error('Failed to load content');
+                    }
+                } catch (error) {
+                    this.showStatus(`Error: ${error.message}`, 'error');
+                }
+            }
+
+            displayContent(content) {
+                const frame = document.createElement('iframe');
+                frame.className = 'proxy-frame';
+                frame.srcdoc = content;
+                
+                this.resultDiv.innerHTML = '';
+                this.resultDiv.appendChild(frame);
+            }
+
+            showStatus(message, type) {
+                const status = document.createElement('div');
+                status.className = `status ${type}`;
+                status.textContent = message;
+                
+                this.resultDiv.insertBefore(status, this.resultDiv.firstChild);
+                
+                setTimeout(() => status.remove(), 3000);
+            }
+        }
+
+        const proxyService = new ProxyService();
+
+        function proxyUrl() {
+            const url = document.getElementById('urlInput').value;
+            if (url) {
+                proxyService.fetchUrl(url);
+            } else {
+                proxyService.showStatus('Please enter a valid URL', 'error');
+            }
+        }
+
+        // Enable Enter key submission
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                proxyUrl();
+            }
+        });
+    </script>
+</body>
+</html>
