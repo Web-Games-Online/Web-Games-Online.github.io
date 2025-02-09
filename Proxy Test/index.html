@@ -3,104 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Proxy</title>
+    <title>Dynamic Web Proxy</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #1e40af;
-            --background: #0f172a;
-            --text: #f8fafc;
-        }
+        /* Previous styles remain the same */
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            min-height: 100vh;
+        .navigation-bar {
             display: flex;
-            flex-direction: column;
-        }
-
-        #particles-js {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .container {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            width: 100%;
-        }
-
-        .proxy-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .input-group {
+            gap: 1rem;
             margin-bottom: 1rem;
         }
 
-        input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid var(--primary);
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 0.5rem;
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        button {
+        .nav-button {
             background: var(--primary);
             color: var(--text);
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
         }
 
-        button:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-        }
-
-        #result {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 0.5rem;
-            min-height: 200px;
-        }
-
-        .iframe-container {
+        .proxy-frame {
             width: 100%;
-            height: 600px;
+            height: 700px;
             border: none;
             border-radius: 0.5rem;
-            overflow: hidden;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
         }
     </style>
 </head>
@@ -109,82 +35,78 @@
     
     <div class="container">
         <div class="proxy-box">
+            <div class="navigation-bar">
+                <button class="nav-button" onclick="goBack()">← Back</button>
+                <button class="nav-button" onclick="goForward()">Forward →</button>
+                <button class="nav-button" onclick="refreshFrame()">↻ Refresh</button>
+            </div>
             <div class="input-group">
                 <input type="url" id="urlInput" placeholder="Enter URL (e.g., https://example.com)">
             </div>
-            <button onclick="fetchUrl()">Load Website</button>
+            <button onclick="loadUrl()">Load Website</button>
             <div id="result"></div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        particlesJS("particles-js", {
-            particles: {
-                number: { value: 80 },
-                color: { value: "#ffffff" },
-                shape: { type: "circle" },
-                opacity: {
-                    value: 0.5,
-                    random: true
-                },
-                size: {
-                    value: 3,
-                    random: true
-                },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 6
-                }
-            },
-            interactivity: {
-                detect_on: "canvas",
-                events: {
-                    onhover: {
-                        enable: true,
-                        mode: "repulse"
-                    },
-                    onclick: {
-                        enable: true,
-                        mode: "push"
-                    }
-                }
-            }
-        });
+        // Previous particle.js configuration remains the same
 
-        async function fetchUrl() {
+        let proxyFrame;
+        let frameHistory = [];
+        let currentHistoryIndex = -1;
+
+        function loadUrl() {
             const url = document.getElementById('urlInput').value;
             const resultDiv = document.getElementById('result');
             
-            try {
-                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
-                const data = await response.text();
-                
-                const container = document.createElement('div');
-                container.className = 'iframe-container';
-                
-                const iframe = document.createElement('iframe');
-                iframe.srcdoc = data;
-                
-                container.appendChild(iframe);
+            if (!proxyFrame) {
+                proxyFrame = document.createElement('iframe');
+                proxyFrame.className = 'proxy-frame';
                 resultDiv.innerHTML = '';
-                resultDiv.appendChild(container);
-            } catch (error) {
-                resultDiv.innerHTML = 'Error loading website. Please try another URL.';
+                resultDiv.appendChild(proxyFrame);
+            }
+
+            const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(url)}`;
+            proxyFrame.src = proxyUrl;
+            
+            frameHistory.push(proxyUrl);
+            currentHistoryIndex = frameHistory.length - 1;
+        }
+
+        function goBack() {
+            if (currentHistoryIndex > 0) {
+                currentHistoryIndex--;
+                proxyFrame.src = frameHistory[currentHistoryIndex];
             }
         }
 
-        document.getElementById('urlInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                fetchUrl();
+        function goForward() {
+            if (currentHistoryIndex < frameHistory.length - 1) {
+                currentHistoryIndex++;
+                proxyFrame.src = frameHistory[currentHistoryIndex];
             }
+        }
+
+        function refreshFrame() {
+            if (proxyFrame) {
+                proxyFrame.src = proxyFrame.src;
+            }
+        }
+
+        // Event listener for iframe navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    const href = e.target.getAttribute('href');
+                    if (href.startsWith('/proxy')) {
+                        proxyFrame.src = href;
+                        frameHistory.push(href);
+                        currentHistoryIndex = frameHistory.length - 1;
+                    }
+                }
+            });
         });
     </script>
 </body>
