@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Web Proxy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <div class="proxy-interface">
+            <div class="nav-bar">
+                <button class="nav-button" onclick="proxyHistory.back()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="nav-button" onclick="proxyHistory.forward()">
+                    <i class="fas fa-arrow-right"></i> Forward
+                </button>
+                <button class="nav-button" onclick="proxyHistory.refresh()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="nav-button" onclick="proxyHistory.home()">
+                    <i class="fas fa-home"></i> Home
+                </button>
+            </div>
+            <div class="url-bar">
+                <input type="url" class="url-input" id="urlInput" 
+                       placeholder="Enter URL (e.g., https://example.com)">
+                <button class="load-button" onclick="loadUrl()">
+                    <i class="fas fa-globe"></i> Load
+                </button>
+            </div>
+            <div class="frame-container" id="frameContainer"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="particles-config.js"></script>
+    <script src="proxy.js"></script>
+</body>
+</html>
