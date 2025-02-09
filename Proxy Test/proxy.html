@@ -1,130 +1,234 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Proxy</title>
+    <title>Dynamic Web Proxy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --error-color: #e74c3c;
-            --background-color: #ecf0f1;
+            --primary-color: #9b59b6;
+            --secondary-color: #8e44ad;
+            --text-color: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: var(--background-color);
+            font-family: 'Arial', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            background: #2c3e50;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
 
         .container {
+            position: relative;
+            z-index: 2;
             max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 50px auto;
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
         }
 
         input[type="url"] {
             width: 100%;
-            padding: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--primary-color);
-            border-radius: 4px;
+            border-radius: 8px;
+            color: var(--text-color);
             font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--primary-color);
         }
 
         button {
-            background: var(--secondary-color);
+            width: 100%;
+            padding: 15px;
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 16px;
-            transition: background 0.3s;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         button:hover {
-            background: var(--primary-color);
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
         }
 
         #result {
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            min-height: 200px;
         }
 
         .status {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
         }
 
         .success {
-            background: var(--success-color);
-            color: white;
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
         }
 
         .error {
-            background: var(--error-color);
-            color: white;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
         }
 
         .proxy-frame {
             width: 100%;
             height: 500px;
             border: none;
-            margin-top: 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
+    <div id="particles-js"></div>
+    
     <div class="container">
-        <h1>Web Proxy</h1>
+        <h1>Dynamic Web Proxy</h1>
         <div class="input-group">
             <input type="url" id="urlInput" placeholder="Enter URL to proxy (e.g., https://example.com)">
         </div>
-        <button onclick="proxyUrl()">Load Site</button>
+        <button onclick="proxyUrl()">Access Site</button>
         <div id="result"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#9b59b6" },
+                "shape": {
+                    "type": "circle",
+                    "stroke": { "width": 0, "color": "#000000" },
+                    "polygon": { "nb_sides": 5 }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.1 }
+                },
+                "size": {
+                    "value": 5,
+                    "random": true,
+                    "anim": { "enable": true, "speed": 40, "size_min": 0.1 }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#9b59b6",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" }
+                }
+            },
+            "retina_detect": true
+        });
+
         class ProxyService {
             constructor() {
-                this.corsProxy = 'https://api.allorigins.win/get?url=';
+                this.proxyUrls = [
+                    'https://cors-anywhere.herokuapp.com/',
+                    'https://api.codetabs.com/v1/proxy?quest='
+                ];
                 this.resultDiv = document.getElementById('result');
             }
 
             async fetchUrl(url) {
-                try {
-                    const encodedUrl = encodeURIComponent(url);
-                    const response = await fetch(`${this.corsProxy}${encodedUrl}`);
-                    const data = await response.json();
-                    
-                    if (data.contents) {
-                        this.displayContent(data.contents);
+                for (let proxyUrl of this.proxyUrls) {
+                    try {
+                        const response = await fetch(proxyUrl + url, {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const content = await response.text();
+                        this.displayContent(content);
                         this.showStatus('Site loaded successfully!', 'success');
-                    } else {
-                        throw new Error('Failed to load content');
+                        return;
+                    } catch (error) {
+                        continue;
                     }
-                } catch (error) {
-                    this.showStatus(`Error: ${error.message}`, 'error');
                 }
+                this.showStatus('Failed to load content. Please try another URL.', 'error');
             }
 
             displayContent(content) {
                 const frame = document.createElement('iframe');
                 frame.className = 'proxy-frame';
                 frame.srcdoc = content;
-                
                 this.resultDiv.innerHTML = '';
                 this.resultDiv.appendChild(frame);
             }
@@ -133,9 +237,7 @@
                 const status = document.createElement('div');
                 status.className = `status ${type}`;
                 status.textContent = message;
-                
                 this.resultDiv.insertBefore(status, this.resultDiv.firstChild);
-                
                 setTimeout(() => status.remove(), 3000);
             }
         }
@@ -151,7 +253,6 @@
             }
         }
 
-        // Enable Enter key submission
         document.getElementById('urlInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 proxyUrl();
