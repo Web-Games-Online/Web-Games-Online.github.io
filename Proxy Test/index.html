@@ -184,7 +184,7 @@
 </head>
 <body>
     <div id="particles-js"></div>
-    
+
     <div class="container">
         <div class="proxy-interface">
             <div class="nav-bar">
@@ -203,7 +203,7 @@
             </div>
 
             <div class="url-bar">
-                <input type="url" class="url-input" id="urlInput" 
+                <input type="url" class="url-input" id="urlInput"
                        placeholder="Enter URL (e.g., https://example.com)">
                 <button class="load-button" onclick="loadUrl()">
                     <i class="fas fa-globe"></i> Load
@@ -288,15 +288,23 @@
 
             navigate(url) {
                 if (!this.frame) this.initialize();
-                
+
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                
+
                 this.history = this.history.slice(0, this.currentIndex + 1);
                 this.history.push(proxyUrl);
                 this.currentIndex++;
-                
+
                 this.frame.src = proxyUrl;
                 this.showStatus('Loading website...', 'success');
+
+                this.frame.onload = () => {
+                    this.showStatus('Website loaded successfully', 'success');
+                };
+
+                this.frame.onerror = () => {
+                    this.showStatus('Failed to load website', 'error');
+                };
             }
 
             back() {
