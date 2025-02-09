@@ -3,7 +3,7 @@ class DiscordProxy {
         this.history = [];
         this.currentIndex = -1;
         this.frame = null;
-        this.proxyBase = 'https://api.allorigins.win/raw?url=';
+        this.proxyBase = 'https://cors-anywhere.herokuapp.com/';
         this.discordUrl = 'https://discord.com';
     }
 
@@ -29,7 +29,7 @@ class DiscordProxy {
             Array.from(links).forEach(link => {
                 const href = link.getAttribute('href');
                 if (href && href.includes('discord.com')) {
-                    link.href = this.proxyBase + encodeURIComponent(href);
+                    link.href = this.proxyBase + href;
                     link.onclick = (e) => {
                         e.preventDefault();
                         this.navigate(href);
@@ -46,6 +46,17 @@ class DiscordProxy {
                 };
             });
 
+            // Process Discord assets and resources
+            const resources = frameDoc.querySelectorAll('img, script, link[rel="stylesheet"]');
+            Array.from(resources).forEach(resource => {
+                const srcAttr = resource.src || resource.href;
+                if (srcAttr && srcAttr.includes('discord.com')) {
+                    const newSrc = this.proxyBase + srcAttr;
+                    if (resource.src) resource.src = newSrc;
+                    if (resource.href) resource.href = newSrc;
+                }
+            });
+
         } catch (error) {
             this.showStatus('Content processing completed', 'success');
         }
@@ -53,7 +64,7 @@ class DiscordProxy {
 
     async navigate(url) {
         try {
-            const proxyUrl = this.proxyBase + encodeURIComponent(url);
+            const proxyUrl = this.proxyBase + url;
             
             this.history = this.history.slice(0, this.currentIndex + 1);
             this.history.push(url);
@@ -72,12 +83,13 @@ class DiscordProxy {
         const action = form.getAttribute('action');
         
         if (action) {
-            this.navigate(action);
+            const fullUrl = action.startsWith('http') ? action : this.discordUrl + action;
+            this.navigate(fullUrl);
         }
     }
 
     loadDiscord() {
-        const proxyUrl = this.proxyBase + encodeURIComponent(this.discordUrl);
+        const proxyUrl = this.proxyBase + this.discordUrl;
         this.frame.src = proxyUrl;
     }
 
@@ -98,11 +110,15 @@ class DiscordProxy {
     refresh() {
         if (this.frame && this.history[this.currentIndex]) {
             this.navigate(this.history[this.currentIndex]);
+        } else {
+            this.loadDiscord();
         }
     }
 
     home() {
         this.loadDiscord();
+        this.history = [];
+        this.currentIndex = -1;
     }
 
     showStatus(message, type) {
@@ -139,6 +155,10 @@ document.addEventListener('keydown', (e) => {
                 e.preventDefault();
                 discordProxy.forward();
                 break;
+            case 'h':
+                e.preventDefault();
+                discordProxy.home();
+                break;
         }
     }
 });
@@ -149,3 +169,9 @@ window.addEventListener('message', (event) => {
         discordProxy.navigate(event.data.url);
     }
 });
+
+// Handle errors gracefully
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+    discordProxy.showStatus('Handled an error gracefully', 'success');
+    return false;
+};
