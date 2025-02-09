@@ -3,30 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Web Proxy</title>
+    <title>Advanced Web Proxy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Previous styles remain the same */
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --background: #0f172a;
+            --text: #f8fafc;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
 
-        .navigation-bar {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .proxy-interface {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-bar {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.75rem;
+            border-radius: 8px;
         }
 
         .nav-button {
             background: var(--primary);
             color: var(--text);
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 6px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .url-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+        }
+
+        .load-button {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 0 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .load-button:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .frame-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            height: 700px;
         }
 
         .proxy-frame {
             width: 100%;
-            height: 700px;
+            height: 100%;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .status.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .status.error {
+            background: var(--error);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-bar {
+                flex-wrap: wrap;
+            }
+
+            .url-bar {
+                flex-direction: column;
+            }
+
+            .frame-container {
+                height: 500px;
+            }
         }
     </style>
 </head>
@@ -34,20 +186,35 @@
     <div id="particles-js"></div>
     
     <div class="container">
-        <div class="proxy-box">
-            <div class="navigation-bar">
-                <button class="nav-button" onclick="goBack()">← Back</button>
-                <button class="nav-button" onclick="goForward()">Forward →</button>
-                <button class="nav-button" onclick="refreshFrame()">↻ Refresh</button>
+        <div class="proxy-interface">
+            <div class="nav-bar">
+                <button class="nav-button" onclick="proxyHistory.back()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button class="nav-button" onclick="proxyHistory.forward()">
+                    <i class="fas fa-arrow-right"></i> Forward
+                </button>
+                <button class="nav-button" onclick="proxyHistory.refresh()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="nav-button" onclick="proxyHistory.home()">
+                    <i class="fas fa-home"></i> Home
+                </button>
             </div>
-            <div class="input-group">
-                <input type="url" id="urlInput" placeholder="Enter URL (e.g., https://example.com)">
+
+            <div class="url-bar">
+                <input type="url" class="url-input" id="urlInput" 
+                       placeholder="Enter URL (e.g., https://example.com)">
+                <button class="load-button" onclick="loadUrl()">
+                    <i class="fas fa-globe"></i> Load
+                </button>
             </div>
-            <button onclick="loadUrl()">Load Website</button>
-            <div id="result"></div>
+
+            <div class="frame-container" id="frameContainer"></div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS("particles-js", {
             "particles": {
@@ -59,40 +226,23 @@
                     }
                 },
                 "color": {
-                    "value": "#9b59b6"
+                    "value": "#2563eb"
                 },
                 "shape": {
-                    "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    },
-                    "polygon": {
-                        "nb_sides": 5
-                    }
+                    "type": "circle"
                 },
                 "opacity": {
                     "value": 0.5,
-                    "random": true,
-                    "anim": {
-                        "enable": true,
-                        "speed": 1,
-                        "opacity_min": 0.1
-                    }
+                    "random": true
                 },
                 "size": {
-                    "value": 5,
-                    "random": true,
-                    "anim": {
-                        "enable": true,
-                        "speed": 40,
-                        "size_min": 0.1
-                    }
+                    "value": 3,
+                    "random": true
                 },
                 "line_linked": {
                     "enable": true,
                     "distance": 150,
-                    "color": "#9b59b6",
+                    "color": "#2563eb",
                     "opacity": 0.4,
                     "width": 1
                 },
@@ -103,12 +253,7 @@
                     "random": false,
                     "straight": false,
                     "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
+                    "bounce": false
                 }
             },
             "interactivity": {
@@ -121,78 +266,90 @@
                     "onclick": {
                         "enable": true,
                         "mode": "push"
-                    }
+                    },
+                    "resize": true
                 }
             },
             "retina_detect": true
         });
 
-        window.onscroll = function() {
-            var header = document.getElementById('header');
-            var scrollPosition = window.pageYOffset;
-            if (scrollPosition > 0) {
-                header.style.backgroundColor = 'rgba(31, 31, 31, 0.4)';
-            } else {
-                header.style.backgroundColor = 'rgba(31, 31, 31, 0.6)';
+        class ProxyHistory {
+            constructor() {
+                this.history = [];
+                this.currentIndex = -1;
+                this.frame = null;
             }
-        };
 
-        let proxyFrame;
-        let frameHistory = [];
-        let currentHistoryIndex = -1;
+            initialize() {
+                this.frame = document.createElement('iframe');
+                this.frame.className = 'proxy-frame';
+                document.getElementById('frameContainer').appendChild(this.frame);
+            }
+
+            navigate(url) {
+                if (!this.frame) this.initialize();
+                
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                
+                this.history = this.history.slice(0, this.currentIndex + 1);
+                this.history.push(proxyUrl);
+                this.currentIndex++;
+                
+                this.frame.src = proxyUrl;
+                this.showStatus('Loading website...', 'success');
+            }
+
+            back() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.frame.src = this.history[this.currentIndex];
+                }
+            }
+
+            forward() {
+                if (this.currentIndex < this.history.length - 1) {
+                    this.currentIndex++;
+                    this.frame.src = this.history[this.currentIndex];
+                }
+            }
+
+            refresh() {
+                if (this.frame && this.history[this.currentIndex]) {
+                    this.frame.src = this.history[this.currentIndex];
+                }
+            }
+
+            home() {
+                document.getElementById('urlInput').value = '';
+                if (this.frame) {
+                    this.frame.src = 'about:blank';
+                }
+            }
+
+            showStatus(message, type) {
+                const status = document.createElement('div');
+                status.className = `status ${type}`;
+                status.textContent = message;
+                document.body.appendChild(status);
+                setTimeout(() => status.remove(), 3000);
+            }
+        }
+
+        const proxyHistory = new ProxyHistory();
 
         function loadUrl() {
             const url = document.getElementById('urlInput').value;
-            const resultDiv = document.getElementById('result');
-            
-            if (!proxyFrame) {
-                proxyFrame = document.createElement('iframe');
-                proxyFrame.className = 'proxy-frame';
-                resultDiv.innerHTML = '';
-                resultDiv.appendChild(proxyFrame);
-            }
-
-            const proxyUrl = `http://localhost:3000/proxy?url=${encodeURIComponent(url)}`;
-            proxyFrame.src = proxyUrl;
-            
-            frameHistory.push(proxyUrl);
-            currentHistoryIndex = frameHistory.length - 1;
-        }
-
-        function goBack() {
-            if (currentHistoryIndex > 0) {
-                currentHistoryIndex--;
-                proxyFrame.src = frameHistory[currentHistoryIndex];
+            if (url) {
+                proxyHistory.navigate(url);
+            } else {
+                proxyHistory.showStatus('Please enter a valid URL', 'error');
             }
         }
 
-        function goForward() {
-            if (currentHistoryIndex < frameHistory.length - 1) {
-                currentHistoryIndex++;
-                proxyFrame.src = frameHistory[currentHistoryIndex];
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadUrl();
             }
-        }
-
-        function refreshFrame() {
-            if (proxyFrame) {
-                proxyFrame.src = proxyFrame.src;
-            }
-        }
-
-        // Event listener for iframe navigation
-        document.addEventListener('DOMContentLoaded', () => {
-            const resultDiv = document.getElementById('result');
-            resultDiv.addEventListener('click', (e) => {
-                if (e.target.tagName === 'A') {
-                    e.preventDefault();
-                    const href = e.target.getAttribute('href');
-                    if (href.startsWith('/proxy')) {
-                        proxyFrame.src = href;
-                        frameHistory.push(href);
-                        currentHistoryIndex = frameHistory.length - 1;
-                    }
-                }
-            });
         });
     </script>
 </body>
