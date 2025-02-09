@@ -1,17 +1,20 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Web Proxy</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js">
+    <title>Advanced Web Proxy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #9b59b6;
             --secondary-color: #8e44ad;
-            --text-color: #ffffff;
+            --accent-color: #3498db;
+            --background: #2c3e50;
+            --text-color: #ecf0f1;
             --glass-bg: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
         }
 
         * {
@@ -21,10 +24,11 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
             color: var(--text-color);
-            overflow-x: hidden;
-            background: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
         }
 
         #particles-js {
@@ -39,137 +43,285 @@
         .container {
             position: relative;
             z-index: 2;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 30px;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .proxy-card {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             border-radius: 15px;
+            padding: 2rem;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
-        h1 {
+        .header {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
             color: var(--primary-color);
             text-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            opacity: 0.8;
         }
 
         .input-group {
-            margin-bottom: 25px;
             position: relative;
+            margin-bottom: 1.5rem;
         }
 
-        input[type="url"] {
+        .url-input {
             width: 100%;
-            padding: 15px;
+            padding: 1rem 3rem 1rem 1rem;
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             color: var(--text-color);
-            font-size: 16px;
+            font-size: 1rem;
             transition: all 0.3s ease;
         }
 
-        input[type="url"]:focus {
+        .url-input:focus {
             outline: none;
             box-shadow: 0 0 15px var(--primary-color);
         }
 
-        button {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary-color);
-            color: white;
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .proxy-button {
+            flex: 1;
+            padding: 1rem;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        button:hover {
-            background: var(--secondary-color);
+        .primary-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .secondary-btn {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .proxy-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        #result {
-            margin-top: 25px;
-            padding: 20px;
+        .result-container {
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            min-height: 200px;
+            overflow: hidden;
+            margin-top: 1.5rem;
         }
 
-        .status {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
+        .result-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .success {
-            background: rgba(46, 204, 113, 0.2);
-            border: 1px solid #2ecc71;
+        .result-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
         }
 
-        .error {
-            background: rgba(231, 76, 60, 0.2);
-            border: 1px solid #e74c3c;
+        .result-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .proxy-frame {
             width: 100%;
-            height: 500px;
+            height: 600px;
             border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
+            background: white;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid var(--success-color);
+        }
+
+        .error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--error-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .proxy-frame {
+                height: 400px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="particles-js"></div>
-    
+
     <div class="container">
-        <h1>Dynamic Web Proxy</h1>
-        <div class="input-group">
-            <input type="url" id="urlInput" placeholder="Enter URL to proxy (e.g., https://example.com)">
+        <div class="proxy-card">
+            <div class="header">
+                <h1>Advanced Web Proxy</h1>
+                <p>Access any website through our secure proxy service</p>
+            </div>
+
+            <div class="input-group">
+                <input type="url" class="url-input" id="urlInput"
+                       placeholder="Enter URL (e.g., https://example.com)"
+                       autocomplete="off">
+                <i class="fas fa-link input-icon"></i>
+            </div>
+
+            <div class="button-group">
+                <button class="proxy-button primary-btn" onclick="proxyUrl()">
+                    <i class="fas fa-globe"></i>
+                    Access Site
+                </button>
+                <button class="proxy-button secondary-btn" onclick="clearProxy()">
+                    <i class="fas fa-broom"></i>
+                    Clear
+                </button>
+            </div>
+
+            <div id="status"></div>
+
+            <div class="result-container">
+                <div class="result-header">
+                    <span class="result-title">Proxied Content</span>
+                    <div class="result-actions">
+                        <button class="action-btn" onclick="refreshProxy()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="action-btn" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="result"></div>
+            </div>
         </div>
-        <button onclick="proxyUrl()">Access Site</button>
-        <div id="result"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS("particles-js", {
             "particles": {
-                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#9b59b6" },
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#9b59b6"
+                },
                 "shape": {
                     "type": "circle",
-                    "stroke": { "width": 0, "color": "#000000" },
-                    "polygon": { "nb_sides": 5 }
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
                 },
                 "opacity": {
                     "value": 0.5,
                     "random": true,
-                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.1 }
+                    "anim": {
+                        "enable": true,
+                        "speed": 1,
+                        "opacity_min": 0.1
+                    }
                 },
                 "size": {
                     "value": 5,
                     "random": true,
-                    "anim": { "enable": true, "speed": 40, "size_min": 0.1 }
+                    "anim": {
+                        "enable": true,
+                        "speed": 40,
+                        "size_min": 0.1
+                    }
                 },
                 "line_linked": {
                     "enable": true,
@@ -186,47 +338,48 @@
                     "straight": false,
                     "out_mode": "out",
                     "bounce": false,
-                    "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
                 }
             },
             "interactivity": {
                 "detect_on": "canvas",
                 "events": {
-                    "onhover": { "enable": true, "mode": "repulse" },
-                    "onclick": { "enable": true, "mode": "push" }
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
                 }
             },
             "retina_detect": true
         });
 
-// Update the ProxyService class with these working proxy URLs
-class ProxyService {
-    constructor() {
-        this.proxyUrls = [
-            'https://api.allorigins.win/raw?url=',
-            'https://api.codetabs.com/v1/proxy?quest=',
-            'https://proxy.cors.sh/',
-            'https://corsproxy.io/?'
-        ];
-        this.resultDiv = document.getElementById('result');
-    }
-}
+        class ProxyService {
+            constructor() {
+                this.proxyUrl = 'http://localhost:3000/proxy?url=';
+                this.resultDiv = document.getElementById('result');
+                this.statusDiv = document.getElementById('status');
+            }
 
             async fetchUrl(url) {
-                for (let proxyUrl of this.proxyUrls) {
-                    try {
-                        const response = await fetch(proxyUrl + url, {
-                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                        });
-                        const content = await response.text();
-                        this.displayContent(content);
-                        this.showStatus('Site loaded successfully!', 'success');
-                        return;
-                    } catch (error) {
-                        continue;
-                    }
+                try {
+                    const response = await fetch(this.proxyUrl + encodeURIComponent(url));
+                    if (!response.ok) throw new Error('Failed to fetch content');
+
+                    const content = await response.text();
+                    this.displayContent(content);
+                    this.showStatus('Site loaded successfully!', 'success');
+                } catch (error) {
+                    this.showStatus(error.message, 'error');
                 }
-                this.showStatus('Failed to load content. Please try another URL.', 'error');
             }
 
             displayContent(content) {
@@ -239,10 +392,20 @@ class ProxyService {
 
             showStatus(message, type) {
                 const status = document.createElement('div');
-                status.className = `status ${type}`;
-                status.textContent = message;
-                this.resultDiv.insertBefore(status, this.resultDiv.firstChild);
+                status.className = `status-message ${type}`;
+                status.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${message}
+                `;
+                this.statusDiv.innerHTML = '';
+                this.statusDiv.appendChild(status);
                 setTimeout(() => status.remove(), 3000);
+            }
+
+            clear() {
+                this.resultDiv.innerHTML = '';
+                this.statusDiv.innerHTML = '';
+                document.getElementById('urlInput').value = '';
             }
         }
 
@@ -254,6 +417,26 @@ class ProxyService {
                 proxyService.fetchUrl(url);
             } else {
                 proxyService.showStatus('Please enter a valid URL', 'error');
+            }
+        }
+
+        function clearProxy() {
+            proxyService.clear();
+        }
+
+        function refreshProxy() {
+            const url = document.getElementById('urlInput').value;
+            if (url) proxyService.fetchUrl(url);
+        }
+
+        function toggleFullscreen() {
+            const frame = document.querySelector('.proxy-frame');
+            if (frame) {
+                if (frame.requestFullscreen) {
+                    frame.requestFullscreen();
+                } else if (frame.webkitRequestFullscreen) {
+                    frame.webkitRequestFullscreen();
+                }
             }
         }
 
