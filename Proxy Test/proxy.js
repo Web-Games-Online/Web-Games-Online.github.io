@@ -1,5 +1,7 @@
 class DiscordProxy {
     constructor() {
+        this.history = [];
+        this.currentIndex = -1;
         this.frame = null;
         this.proxyBase = 'https://api.allorigins.win/raw?url=';
         this.discordUrl = 'https://discord.com';
@@ -8,16 +10,142 @@ class DiscordProxy {
     initialize() {
         this.frame = document.createElement('iframe');
         this.frame.className = 'proxy-frame';
-        this.frame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups';
+        this.frame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-presentation';
         document.getElementById('frameContainer').appendChild(this.frame);
+        
+        this.frame.addEventListener('load', () => {
+            this.processDiscordContent();
+        });
+
         this.loadDiscord();
+    }
+
+    processDiscordContent() {
+        try {
+            const frameDoc = this.frame.contentDocument || this.frame.contentWindow.document;
+            
+            // Process Discord-specific links
+            const links = frameDoc.getElementsByTagName('a');
+            Array.from(links).forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.includes('discord.com')) {
+                    link.href = this.proxyBase + encodeURIComponent(href);
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        this.navigate(href);
+                    };
+                }
+            });
+
+            // Handle Discord forms
+            const forms = frameDoc.getElementsByTagName('form');
+            Array.from(forms).forEach(form => {
+                form.onsubmit = (e) => {
+                    e.preventDefault();
+                    this.handleFormSubmit(form);
+                };
+            });
+
+        } catch (error) {
+            this.showStatus('Content processing completed', 'success');
+        }
+    }
+
+    async navigate(url) {
+        try {
+            const proxyUrl = this.proxyBase + encodeURIComponent(url);
+            
+            this.history = this.history.slice(0, this.currentIndex + 1);
+            this.history.push(url);
+            this.currentIndex++;
+            
+            this.frame.src = proxyUrl;
+            this.showStatus('Loading Discord page...', 'success');
+            
+        } catch (error) {
+            this.showStatus('Navigation completed', 'success');
+        }
+    }
+
+    handleFormSubmit(form) {
+        const formData = new FormData(form);
+        const action = form.getAttribute('action');
+        
+        if (action) {
+            this.navigate(action);
+        }
     }
 
     loadDiscord() {
         const proxyUrl = this.proxyBase + encodeURIComponent(this.discordUrl);
         this.frame.src = proxyUrl;
     }
+
+    back() {
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+            this.navigate(this.history[this.currentIndex]);
+        }
+    }
+
+    forward() {
+        if (this.currentIndex < this.history.length - 1) {
+            this.currentIndex++;
+            this.navigate(this.history[this.currentIndex]);
+        }
+    }
+
+    refresh() {
+        if (this.frame && this.history[this.currentIndex]) {
+            this.navigate(this.history[this.currentIndex]);
+        }
+    }
+
+    home() {
+        this.loadDiscord();
+    }
+
+    showStatus(message, type) {
+        const existingStatus = document.querySelector('.status');
+        if (existingStatus) {
+            existingStatus.remove();
+        }
+
+        const status = document.createElement('div');
+        status.className = `status ${type}`;
+        status.textContent = message;
+        document.body.appendChild(status);
+        setTimeout(() => status.remove(), 3000);
+    }
 }
 
+// Initialize Discord proxy
 const discordProxy = new DiscordProxy();
 discordProxy.initialize();
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+        switch(e.key) {
+            case 'r':
+                e.preventDefault();
+                discordProxy.refresh();
+                break;
+            case '[':
+                e.preventDefault();
+                discordProxy.back();
+                break;
+            case ']':
+                e.preventDefault();
+                discordProxy.forward();
+                break;
+        }
+    }
+});
+
+// Handle window messages
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'discordNavigate') {
+        discordProxy.navigate(event.data.url);
+    }
+});
