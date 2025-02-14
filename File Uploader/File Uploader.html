@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Uploader Syfer-eng</title>
+
+    <!-- Link to particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Basic reset and full screen setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #2d2d2d;
+            z-index: -1;
+        }
+
+        /* Header styling */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 10px 0;
+            background-color: rgba(31, 31, 31, 0.6);
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            transition: background-color 0.3s;
+        }
+
+        /* Main content styling */
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Hide the default file input */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Custom button to trigger file input */
+        .file-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-btn:hover {
+            background: linear-gradient(45deg, #8e44ad, #9b59b6);
+            transform: scale(1.05);
+        }
+
+        h3 {
+            margin-top: 30px;
+            font-size: 24px;
+        }
+
+        #generatedLink {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        a {
+            color: #9b59b6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #8e44ad;
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Progress bar styles */
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 20px;
+            height: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #8e44ad;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Particle background -->
+<div id="particles-js"></div>
+
+<!-- Header -->
+<header id="header">
+    Syfer-eng's File Uploader
+</header>
+
+<!-- Main content -->
+<div class="content">
+    <h2>Upload Your File</h2>
+    <form id="uploadForm">
+        <!-- Hidden file input -->
+        <input type="file" id="fileInput" accept="video/*,.doc,.docx,.pdf,.txt,.jpg,.png,.zip" required>
+
+        <!-- Custom button to trigger file input -->
+        <label for="fileInput" class="file-btn">Choose File</label>
+    </form>
+
+    <!-- Progress bar container -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar">0%</div>
+    </div>
+
+    <div class="loading">Processing your file...</div>
+
+    <h3>Generated Link</h3>
+    <p id="generatedLink"></p>
+</div>
+
+<script>
+    // Particles.js config
+    particlesJS("particles-js", {
+        "particles": {
+            "number": {
+                "value": 80,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#9b59b6"
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                },
+                "polygon": {
+                    "nb_sides": 5
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 1,
+                    "opacity_min": 0.1
+                }
+            },
+            "size": {
+                "value": 5,
+                "random": true,
+                "anim": {
+                    "enable": true,
+                    "speed": 40,
+                    "size_min": 0.1
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#9b59b6",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 6,
+                "direction": "none",
+                "random": false,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": false,
+                    "rotateX": 600,
+                    "rotateY": 1200
+                }
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "repulse"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                }
+            }
+        },
+        "retina_detect": true
+    });
+
+    // Scroll effect for header
+    window.onscroll = function() {
+        var header = document.getElementById('header');
+        var scrollPosition = window.pageYOffset;
+        if (scrollPosition > 0) {
+            header.style.backgroundColor = 'rgba(31, 31, 31, 0.4)';
+        } else {
+            header.style.backgroundColor = 'rgba(31, 31, 31, 0.6)';
+        }
+    };
+
+    // Automatically upload and show progress bar when a file is selected
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // Show progress bar
+        const progressContainer = document.querySelector('.progress-container');
+        const progressBar = document.getElementById('progressBar');
+        progressContainer.style.display = 'block';
+
+        let progress = 0;
+
+        // Simulate file upload progress
+        const uploadInterval = setInterval(function() {
+            if (progress < 100) {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+                progressBar.innerText = progress + '%';
+            } else {
+                clearInterval(uploadInterval);
+                // Simulate file upload completion
+                handleFileUploadCompletion(file);
+            }
+        }, 50); // Update progress every 50ms
+    });
+
+    // Handle file upload completion (simulate)
+    function handleFileUploadCompletion(file) {
+        const generatedLinkElement = document.getElementById('generatedLink');
+        const fileName = file.name;
+        const fileType = file.type;
+        let generatedLink = '';
+
+        // Simulate a generated link for the uploaded file
+        if (fileType.startsWith('video')) {
+            generatedLink = `<video width="320" height="240" controls>
+                                <source src="${URL.createObjectURL(file)}" type="${fileType}">
+                                Your browser does not support the video tag.
+                             </video>
+                             <br>
+                             <a href="${URL.createObjectURL(file)}" target="_blank">Embed Link</a>`;
+        } else if (fileType.startsWith('image')) {
+            generatedLink = `<img src="${URL.createObjectURL(file)}" alt="Uploaded Image" width="320">
+                             <br>
+                             <a href="${URL.createObjectURL(file)}" target="_blank">Embed Link</a>`;
+        } else if (fileType.startsWith('application/pdf')) {
+            generatedLink = `<iframe src="${URL.createObjectURL(file)}" width="320" height="240"></iframe>
+                             <br>
+                             <a href="${URL.createObjectURL(file)}" target="_blank">Embed Link</a>`;
+        } else {
+            generatedLink = `<a href="${URL.createObjectURL(file)}" download="${fileName}">Download the file</a>`;
+        }
+
+        // Show the generated link
+        generatedLinkElement.innerHTML = generatedLink;
+    }
+</script>
+
+</body>
+</html>
