@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Uploader Syfer-eng</title>
+    <title>File Upload with Particles</title>
 
     <!-- Link to particles.js -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
-    <link rel="stylesheet" href="styles.css">
     <style>
         /* Basic reset and full screen setup */
         * {
@@ -177,7 +176,7 @@
 
 <!-- Header -->
 <header id="header">
-    Syfer-eng's File Uploader
+    File Upload with Particles
 </header>
 
 <!-- Main content -->
@@ -333,15 +332,15 @@
                                 Your browser does not support the video tag.
                              </video>
                              <br>
-                             <a href="${URL.createObjectURL(file)}" target="_blank">Embed Link</a>`;
+                             <a href="${URL.createObjectURL(file)}" target="_blank">View in a new tab</a>`;
         } else if (fileType.startsWith('image')) {
             generatedLink = `<img src="${URL.createObjectURL(file)}" alt="Uploaded Image" width="320">
                              <br>
-                             <a href="${URL.createObjectURL(file)}" target="_blank">Embed Link</a>`;
+                             <a href="${URL.createObjectURL(file)}" target="_blank">View in a new tab</a>`;
         } else if (fileType.startsWith('application/pdf')) {
             generatedLink = `<iframe src="${URL.createObjectURL(file)}" width="320" height="240"></iframe>
                              <br>
-                             <a href="${URL.createObjectURL(file)}" target="_blank">Embed Link</a>`;
+                             <a href="${URL.createObjectURL(file)}" target="_blank">View in a new tab</a>`;
         } else {
             generatedLink = `<a href="${URL.createObjectURL(file)}" download="${fileName}">Download the file</a>`;
         }
