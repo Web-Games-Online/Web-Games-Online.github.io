@@ -1,53 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" id="tab-favicon" href="favicon.png" />
-    <title id="t">Home</title>
+    <meta name="description" content="Your website description here" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="search, apps, technology, sports" />
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <title>Home</title>
+    <!-- Optimized CSS Loading -->
     <link rel="stylesheet" href="/assets/css/global.css?v=6" />
-    <link rel="stylesheet" href="/assets/css/h.css?v=01" />
+    <link rel="stylesheet" href="/assets/css/container.css?v=2" />
     <link rel="stylesheet" href="/assets/css/nav.css?v=01" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6840529569014734"
-     crossorigin="anonymous"></script>
+    <script defer src="/assets/js/i.js?v=03"></script>
+    <script defer async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6840529569014734" crossorigin="anonymous"></script>
   </head>
-  <body class="center" onload="SplashT">
-    <div class="f-nav"></div>
-    <div id="particles-js">
-      <script rel="preload" src="https://cdn.jsdelivr.net/particles.js/2.0.0/"></script>
-      <div class="main">
-<h1 class="title">&#73;&#110;&#116;&#101;&#114;&#115;&#116;&#101;&#108;&#108;&#97;&#114;</h1>
-        <p id="splash"></p>
-        <div class="search-container">
-          <form id="fv" method="POST">
-            <input
-              id="iv"
-              class="search-home"
-              placeholder="Search or enter a URL"
-              type="text" />
-          </form>
-        </div>
-      </div>
-    </div>
-    <script src="assets/js/i.js?v=03"></script>
-    <script src="/assets/js/home.js?v=00"></script>
-    <script src="./assets/ultra/bundle.js?v=10-02-2024"></script>
-    <script src="./assets/ultra/config.js?v=10-02-2024"></script>
-    <script src="assets/js/f.js"></script>
-    <script src="/assets/js/mv.js?v=003"></script>
-    <!-- DO NOT REMOVE-->
+
+  <body>
+    <header>
+      <!-- Navigation or header content -->
+      <div class="f-nav"></div>
+    </header>
+
+    <main>
+      <section class="input-c">
+        <label for="search" class="sr-only">Search</label>
+        <input
+          type="text"
+          id="search"
+          onkeyup="bar()"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        
+        <label for="category" class="sr-only">Select Category</label>
+        <select
+          id="category"
+          name="category"
+          onchange="category()"
+          aria-label="Select Category"
+        >
+          <option value="all">&#65;&#108;&#108;</option>
+          <option value="android">&#65;&#110;&#100;&#114;&#111;&#105;&#100;&#32;&#69;&#109;&#117;&#108;&#97;&#116;&#111;&#114;</option>
+          <option value="2P">&#77;&#117;&#108;&#116;&#105;&#112;&#108;&#97;&#121;&#101;&#114;</option>
+          <option value="sports">&#83;&#112;&#111;&#114;&#116;&#115;</option>
+          <option value="flash">&#70;&#108;&#97;&#115;&#104;</option>
+          <option value="emu">&#69;&#109;&#117;&#108;&#97;&#116;&#111;&#114;</option>
+          <option value="local">&#76;&#111;&#99;&#97;&#108;</option>
+        </select>
+      </section>
+
+      <!-- Content area for pinned items and apps -->
+      <section class="pinned"></section>
+      <section class="apps"></section>
+    </main>
+
+    <footer>
+      <!-- Optional footer content here -->
+    </footer>
+
+    <!-- Optimized Script Loading -->
+    <script defer src="/assets/js/c.js?v=06"></script>
+    <script defer src="./assets/ultra/bundle.js?v=10-02-2024"></script>
+    <script defer src="./assets/ultra/config.js?v=10-02-2024"></script>
+    <script defer src="assets/js/f.js"></script>
+    <script defer src="/assets/js/mv.js?v=003"></script>
+
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-WKJQ5QHQTJ"></script>
     <script>
-      window.dataLayer = window.dataLayer || []
+      window.dataLayer = window.dataLayer || [];
       function gtag() {
-        dataLayer.push(arguments)
+        dataLayer.push(arguments);
       }
-      gtag("js", new Date())
-
-      gtag("config", "G-WKJQ5QHQTJ")
+      gtag('js', new Date());
+      gtag('config', 'G-WKJQ5QHQTJ');
     </script>
-    <!-- DO NOT REMOVE-->
   </body>
 </html>
