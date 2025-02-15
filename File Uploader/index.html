@@ -199,6 +199,9 @@
 
     <h3>Generated Link</h3>
     <p id="generatedLink"></p>
+
+    <h3>Shareable Download Link</h3>
+    <p id="shareableLink"></p>
 </div>
 
 <script>
@@ -345,8 +348,11 @@
             generatedLink = `<a href="${URL.createObjectURL(file)}" download="${fileName}">Download the file</a>`;
         }
 
-        // Show the generated link
         generatedLinkElement.innerHTML = generatedLink;
+
+        // Generate and show shareable download link
+        const shareableLink = `<a href="${URL.createObjectURL(file)}" download="${fileName}" target="_blank">Download Link</a>`;
+        document.getElementById('shareableLink').innerHTML = shareableLink;
     }
 </script>
 
