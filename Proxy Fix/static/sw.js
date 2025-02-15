@@ -1,27 +1,91 @@
-importScripts("/assets/dyn/config.js?v=10-02-2024");
-importScripts("/assets/dyn/worker.js?v=10-02-2024");
-importScripts("/assets/ultra/bundle.js?v=10-02-2024");
-importScripts("/assets/ultra/config.js?v=10-02-2024");
-importScripts(__uv$config.sw || "/assets/ultra/sw.js?v=10-02-2024");
+const CACHE_NAME = 'web-games-online-cache-v1';
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/assets/css/global.css',
+  '/assets/css/container.css',
+  '/assets/css/nav.css',
+  '/assets/js/i.js',
+  '/assets/js/c.js',
+  '/assets/js/mv.js',
+  '/favicon.png',
+  '/assets/ultra/bundle.js',
+  '/assets/ultra/config.js',
+  '/assets/js/f.js',
+  '/assets/ultra/sw.js',
+];
 
-const uv = new UVServiceWorker();
-const dynamic = new Dynamic();
+// Install event to cache the static assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Caching static assets...');
+      return cache.addAll(STATIC_ASSETS);
+    })
+  );
+});
 
-const userKey = new URL(location).searchParams.get("userkey");
-self.dynamic = dynamic;
+// Activate event: Clear old caches
+self.addEventListener('activate', (event) => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
 
-self.addEventListener("fetch", event => {
+// Fetch event: Serve cached assets or fetch from network
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    (async () => {
-      if (await dynamic.route(event)) {
-        return await dynamic.fetch(event);
+    caches.match(event.request).then((cachedResponse) => {
+      // If we have a cached response, return it, otherwise fetch from the network
+      if (cachedResponse) {
+        console.log(`Serving from cache: ${event.request.url}`);
+        return cachedResponse;
       }
 
-      if (event.request.url.startsWith(`${location.origin}/a/`)) {
-        return await uv.fetch(event);
-      }
+      // Otherwise, fetch the resource from the network
+      return fetch(event.request).then((networkResponse) => {
+        // Cache the new resource for future use
+        if (networkResponse && networkResponse.status === 200) {
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone());
+          });
+        }
+        return networkResponse;
+      });
+    }).catch((error) => {
+      console.error('Fetching failed:', error);
+      throw error;
+    })
+  );
+});
 
-      return await fetch(event.request);
-    })(),
+// Optional: Background sync (if needed)
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'your-sync-tag') {
+    event.waitUntil(
+      // Perform background sync actions here
+    );
+  }
+});
+
+// Push notifications (if required)
+self.addEventListener('push', (event) => {
+  const options = {
+    body: event.data.text(),
+    icon: '/favicon.png',
+    badge: '/favicon.png',
+  };
+
+  event.waitUntil(
+    self.registration.showNotification('New Notification', options)
   );
 });
