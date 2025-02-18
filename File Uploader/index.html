@@ -47,7 +47,6 @@
             border-radius: 10px;
             background-color: rgba(0, 0, 0, 0.7);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            min-width: 320px;
         }
         h2 {
             font-size: 32px;
@@ -80,11 +79,10 @@
             margin-top: 30px;
             font-size: 24px;
         }
-        #generatedLink, #shareableLink {
+        #generatedLink {
             margin-top: 10px;
             font-size: 18px;
             color: #ffffff;
-            word-wrap: break-word;
         }
         a {
             color: #9b59b6;
@@ -93,6 +91,15 @@
         }
         a:hover {
             color: #8e44ad;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+        .loading.active {
+            display: block;
         }
         .progress-container {
             width: 100%;
@@ -110,12 +117,6 @@
             text-align: center;
             color: white;
             line-height: 20px;
-            transition: width 0.3s ease;
-        }
-        #selectedFileName {
-            margin-top: 10px;
-            color: #fff;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -127,11 +128,11 @@
         <form id="uploadForm">
             <input type="file" id="fileInput" accept="video/*,.doc,.docx,.pdf,.txt,.jpg,.png,.zip" required>
             <label for="fileInput" class="file-btn">Choose File</label>
-            <div id="selectedFileName"></div>
         </form>
         <div class="progress-container">
             <div class="progress-bar" id="progressBar">0%</div>
         </div>
+        <div class="loading">Processing your file...</div>
         <h3>Generated Link</h3>
         <p id="generatedLink"></p>
         <h3>Shareable Download Link</h3>
@@ -186,20 +187,13 @@
             "retina_detect": true
         });
 
-        const fileInput = document.getElementById('fileInput');
-        const selectedFileName = document.getElementById('selectedFileName');
-
-        fileInput.addEventListener('change', function(event) {
+        document.getElementById('fileInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
-
-            selectedFileName.textContent = `Selected: ${file.name}`;
 
             const progressContainer = document.querySelector('.progress-container');
             const progressBar = document.getElementById('progressBar');
             progressContainer.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressBar.textContent = '0%';
 
             const formData = new FormData();
             formData.append('file', file);
@@ -217,39 +211,30 @@
 
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    const response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        const generatedLinkElement = document.getElementById('generatedLink');
-                        const fileType = file.type;
-                        let generatedLink = '';
+                    const generatedLinkElement = document.getElementById('generatedLink');
+                    const fileType = file.type;
+                    let generatedLink = '';
 
-                        if (fileType.startsWith('video')) {
-                            generatedLink = `<video width="320" height="240" controls>
-                                <source src="Saves/${response.filename}" type="${fileType}">
-                                Your browser does not support the video tag.
-                                </video><br>
-                                <a href="Saves/${response.filename}" target="_blank">View in new tab</a>`;
-                        } else if (fileType.startsWith('image')) {
-                            generatedLink = `<img src="Saves/${response.filename}" alt="Uploaded Image" width="320"><br>
-                                <a href="Saves/${response.filename}" target="_blank">View in new tab</a>`;
-                        } else if (fileType.startsWith('application/pdf')) {
-                            generatedLink = `<iframe src="Saves/${response.filename}" width="320" height="240"></iframe><br>
-                                <a href="Saves/${response.filename}" target="_blank">View in new tab</a>`;
-                        } else {
-                            generatedLink = `<a href="Saves/${response.filename}" download="${response.filename}">Download the file</a>`;
-                        }
-
-                        generatedLinkElement.innerHTML = generatedLink;
-                        document.getElementById('shareableLink').innerHTML = 
-                            `<a href="Saves/${response.filename}" download="${response.filename}" target="_blank">Download Link</a>`;
+                    if (fileType.startsWith('video')) {
+                        generatedLink = `<video width="320" height="240" controls>
+                            <source src="Saves/${file.name}" type="${fileType}">
+                            Your browser does not support the video tag.
+                            </video><br>
+                            <a href="Saves/${file.name}" target="_blank">View in new tab</a>`;
+                    } else if (fileType.startsWith('image')) {
+                        generatedLink = `<img src="Saves/${file.name}" alt="Uploaded Image" width="320"><br>
+                            <a href="Saves/${file.name}" target="_blank">View in new tab</a>`;
+                    } else if (fileType.startsWith('application/pdf')) {
+                        generatedLink = `<iframe src="Saves/${file.name}" width="320" height="240"></iframe><br>
+                            <a href="Saves/${file.name}" target="_blank">View in new tab</a>`;
                     } else {
-                        alert('Upload failed: ' + response.error);
+                        generatedLink = `<a href="Saves/${file.name}" download="${file.name}">Download the file</a>`;
                     }
-                }
-            };
 
-            xhr.onerror = function() {
-                alert('Upload failed. Please try again.');
+                    generatedLinkElement.innerHTML = generatedLink;
+                    document.getElementById('shareableLink').innerHTML = 
+                        `<a href="Saves/${file.name}" download="${file.name}" target="_blank">Download Link</a>`;
+                }
             };
 
             xhr.send(formData);
