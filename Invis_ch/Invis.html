@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invisible Character Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        .result {
+            font-size: 16px;
+            font-family: Consolas, monospace;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            width: 400px;
+            word-wrap: break-word;
+            cursor: pointer;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Invisible Character Generator</h1>
+
+    <div>
+        <h3>Invisible Character:</h3>
+        <textarea id="result" class="result" readonly> </textarea>
+        <button onclick="copyToClipboard()">Copy Invisible Character</button>
+    </div>
+
+    <script>
+        // Predefined invisible characters (e.g., Zero Width Space, Zero Width Non-Joiner)
+        const invisibleChars = {
+            "‎ ": "",
+        };
+
+        // Function to automatically generate an invisible character when the page loads
+        window.onload = function() {
+            generateInvisibleCharacter();
+        }
+
+        // Function to generate a random invisible character from the predefined list
+        function generateInvisibleCharacter() {
+            const resultDiv = document.getElementById('result');
+
+            // Get a random invisible character
+            const charNames = Object.keys(invisibleChars);
+            const randomIndex = Math.floor(Math.random() * charNames.length);
+            const randomCharName = charNames[randomIndex];
+            const randomChar = invisibleChars[randomCharName];
+
+            // Display the invisible character name (this will actually be blank)
+            resultDiv.value = `  ${randomCharName} ‎ `;
+            resultDiv.dataset.invisibleChar = randomChar; // Store the invisible character
+        }
+
+        // Function to request clipboard permissions and copy the text inside the textarea
+        async function copyToClipboard() {
+            const resultDiv = document.getElementById('result');
+
+            try {
+                // Check if clipboard permissions are granted
+                const permissionStatus = await navigator.permissions.query({ name: 'clipboard-write' });
+
+                // If permission is granted, copy the text
+                if (permissionStatus.state === 'granted') {
+                    await navigator.clipboard.writeText(resultDiv.value);
+                } else {
+                    // If permission is not granted, notify the user
+                    alert('Clipboard permission denied. Please enable clipboard access.');
+                }
+            } catch (err) {
+                console.error('Permission error:', err);
+                alert('Failed to access clipboard. Please grant the necessary permissions.');
+            }
+        }
+    </script>
+
+</body>
+</html>
