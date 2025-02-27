@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address and Geolocation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .content {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .info span {
+            font-weight: bold;
+        }
+
+        #locationButton {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #locationButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="title">IP Address and Geolocation</div>
+        <div id="ipInfo" class="info">Loading IP address...</div>
+        <div id="geoInfo" class="info">Loading geolocation...</div>
+        <button id="locationButton" onclick="getGeolocation()">Get Current Location</button>
+    </div>
+
+    <script>
+        // Fetch IP address using ipinfo.io API
+        fetch('https://ipinfo.io?token=ipinfo.io/129.222.44.107?token=b0140e42a16077')
+            .then(response => response.json())
+            .then(data => {
+                const ipAddress = data.ip;
+                const location = data.city ? `${data.city}, ${data.region}, ${data.country}` : "Location not available";
+                document.getElementById("ipInfo").innerHTML = `IP Address: <span>${ipAddress}</span><br>Location: <span>${location}</span>`;
+            })
+            .catch(error => {
+                document.getElementById("ipInfo").innerHTML = "Failed to retrieve IP information.";
+                console.error("Error fetching IP info:", error);
+            });
+
+        // Get Geolocation using browser's geolocation API
+        function getGeolocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    document.getElementById("geoInfo").innerHTML = `Latitude: <span>${lat}</span><br>Longitude: <span>${lon}</span>`;
+                }, function(error) {
+                    document.getElementById("geoInfo").innerHTML = "Failed to retrieve geolocation.";
+                    console.error("Error getting geolocation:", error);
+                });
+            } else {
+                document.getElementById("geoInfo").innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+    </script>
+</body>
+</html>
